@@ -1,0 +1,27 @@
+@import './boostrap.scss';
+
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.app {
+    &-wrapper {}
+    &-header {
+        margin: 0 0 50px;
+    }
+    &-body {
+        margin: 0 0 50px;
+    }
+    &-footer {
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}
+.underline {
+    text-decoration: underline;
+}
