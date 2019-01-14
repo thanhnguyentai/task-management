@@ -5,8 +5,10 @@ function Layout({children}) {
     return ( 
       <div className="app-wrapper container-fluid">
         <div className="row">
-          <div className="app-header col-12">
-            <h1>Task Management</h1>
+          <div className="col-12">
+            <div className="app-header">
+              <h1>Task Management</h1>
+            </div>
           </div>
           <div className="app-body col-12">
             {children}
