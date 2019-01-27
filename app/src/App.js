@@ -7,6 +7,8 @@ import userHelper from './helper/user';
 
 import createStore from './createStore';
 import {Provider} from 'react-redux';
+import {DragDropContextProvider} from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 function App() {
   const isLogin = userHelper.isLogin();
@@ -15,7 +17,11 @@ function App() {
     <Provider store={createStore()}>
       <Layout>
         {!isLogin && <Login/>}
-        {isLogin && <Tasks/>}
+        { isLogin && 
+          <DragDropContextProvider backend={HTML5Backend}>
+            <Tasks/>
+          </DragDropContextProvider>
+        }
       </Layout>
     </Provider>
   );

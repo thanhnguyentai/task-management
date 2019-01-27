@@ -1,8 +1,6 @@
 import React , {useEffect}from 'react';
 import './Tasks.scss';
 import TaskColumn from '../components/TaskColumn';
-import {DragDropContextProvider} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import {connect} from 'react-redux';
 import TaskState from '../constant/task_state';
 import {fetchTaskAction} from '../actions/task';
@@ -22,14 +20,11 @@ const mapDispatchToProps = {
 };
 
 function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fetchTaskAction}) {
-  console.log(backLogTasks);
   useEffect(() => {
-    console.log('fetch all tasks');
     fetchTaskAction();
   }, []);
 
   return (
-    <DragDropContextProvider backend={HTML5Backend}>
       <div className="task-container">
         <TaskColumn type={TaskState.BACK_LOG}
           header="Back Log"
@@ -48,7 +43,6 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fe
           tasks={completedTasks}
         />
       </div>
-    </DragDropContextProvider>
   );
 }
 
