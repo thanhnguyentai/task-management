@@ -5,14 +5,19 @@ import Tasks from './pages/Tasks';
 
 import userHelper from './helper/user';
 
+import createStore from './createStore';
+import {Provider} from 'react-redux';
+
 function App() {
   const isLogin = userHelper.isLogin();
 
   return (
-    <Layout>
-      {!isLogin && <Login/>}
-      {isLogin && <Tasks/>}
-    </Layout>
+    <Provider store={createStore()}>
+      <Layout>
+        {!isLogin && <Login/>}
+        {isLogin && <Tasks/>}
+      </Layout>
+    </Provider>
   );
 }
 

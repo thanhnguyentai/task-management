@@ -14,7 +14,7 @@ function Layout({children}) {
             {children}
           </div>
           <div className="app-footer col-12">
-            &copy; Thanh Nguyen 2019
+            &copy;2019
           </div>
         </div>
       </div>

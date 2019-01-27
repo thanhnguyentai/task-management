@@ -1,13 +1,37 @@
 import React from 'react';
 import './TaskItem.scss';
+import { DragSource } from 'react-dnd';
 
-function TaskItem() {
-    return (
-        <div className="task-item">
-            <div className="task-item-title">Item Name</div>
-            <div className="task-item-description">Item Description</div>
+export const ITEM_TYPES = {
+    TASK: 'TASK'
+};
+
+const taskSource = {
+    beginDrag(props) {
+        return {
+            title: props.title,
+            description: props.description
+        }
+    },
+    endDrag(props, monitor) {
+        console.log(monitor.getDropResult())
+    }
+}
+
+function collect(connect, monitor) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    }
+}
+
+function TaskItem({isDragging, connectDragSource, title, description}) {
+    return connectDragSource(
+        <div className="task-item" style={{opacity: isDragging ? 0.5 : 1}}>
+            <div className="task-item-title">{title}</div>
+            <div className="task-item-description">{description}</div>
         </div>
     );
 }
 
-export default TaskItem;
+export default DragSource(ITEM_TYPES.TASK, taskSource, collect)(TaskItem);
