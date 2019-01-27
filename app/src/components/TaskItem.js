@@ -25,7 +25,7 @@ function collect(connect, monitor) {
     }
 }
 
-function TaskItem({isDragging, connectDragSource, title, description}) {
+function TaskItem({isDragging, connectDragSource, title, description, state}) {
     return connectDragSource(
         <div className="task-item" style={{opacity: isDragging ? 0.5 : 1}}>
             <div className="task-item-title">{title}</div>

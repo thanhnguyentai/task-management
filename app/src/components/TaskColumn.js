@@ -16,16 +16,18 @@ const collect = function(connect, monitor) {
     }
 }
 
-function TaskColumn({canAddItem, drop, connectDropTarget, isOver}) {
-    const numberItems = 5;
+function TaskColumn({type, header, tasks, connectDropTarget, isOver}) {
     return connectDropTarget(
         <div className="task-column">
-            <div className="task-column-header"><b>{numberItems}</b> Backlog</div>
+            <div className="task-column-header">{tasks && tasks.length > 0 ? <b>{tasks.length} - </b> : null}{header}</div>
             <div className="task-column-items">
-                <TaskItem title="Item title" description="Description"/>
-                <TaskItem title="Item title" description="Description"/>
-                <TaskItem title="Item title" description="Description"/>
-                {canAddItem && <button className="btn-add-item">+</button>}
+                {tasks && tasks.map(task => {
+                    return <TaskItem key={task.id}  
+                        title={task.title} 
+                        description={task.description}
+                        state={task.state}
+                    />
+                })}
             </div>
         </div>
     );
