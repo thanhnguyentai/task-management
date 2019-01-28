@@ -31,7 +31,7 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fe
           tasks={backLogTasks}
         />
         <TaskColumn type={TaskState.SELECTED_DEVELOP}
-          header="Select for Develop"
+          header="Selected for Develop"
           tasks={selectedTasks}
         />
         <TaskColumn type={TaskState.INPROGRESS}
