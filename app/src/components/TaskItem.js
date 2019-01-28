@@ -9,12 +9,11 @@ export const ITEM_TYPES = {
 const taskSource = {
     beginDrag(props) {
         return {
+            id: props.id,
+            state: props.state,
             title: props.title,
             description: props.description
         }
-    },
-    endDrag(props, monitor) {
-        console.log(monitor.getDropResult())
     }
 }
 
@@ -25,7 +24,7 @@ function collect(connect, monitor) {
     }
 }
 
-function TaskItem({isDragging, connectDragSource, title, description, state}) {
+function TaskItem({isDragging, connectDragSource, title, description}) {
     return connectDragSource(
         <div className="task-item" style={{opacity: isDragging ? 0.5 : 1}}>
             <div className="task-item-title">{title}</div>
