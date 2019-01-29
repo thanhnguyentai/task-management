@@ -1,4 +1,4 @@
-import {fetchTask} from '../service/api';
+import {fetchTask} from '../service/taskService';
 
 export const TASK_ACTIONS = {
     ADD_TASK: 'ADD_TASK',
