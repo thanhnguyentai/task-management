@@ -12,6 +12,7 @@ const mapStateToProps = (state, ownProps) => {
     selectedTasks: getTasks(state, TaskState.SELECTED_DEVELOP.key),
     inprogressTasks: getTasks(state, TaskState.INPROGRESS.key),
     completedTasks: getTasks(state, TaskState.COMPLETED.key),
+    projectId: ownProps.match.params.projectId
   }
 };
 
@@ -19,8 +20,9 @@ const mapDispatchToProps = {
   fetchTaskAction
 };
 
-function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fetchTaskAction}) {
+function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fetchTaskAction, projectId}) {
   useEffect(() => {
+    console.log(projectId);
     fetchTaskAction();
   }, []);
 
