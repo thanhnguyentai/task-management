@@ -8,10 +8,10 @@ import {getTasks} from '../reducers';
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    backLogTasks: getTasks(state, TaskState.BACK_LOG),
-    selectedTasks: getTasks(state, TaskState.SELECTED_DEVELOP),
-    inprogressTasks: getTasks(state, TaskState.INPROGRESS),
-    completedTasks: getTasks(state, TaskState.COMPLETED),
+    backLogTasks: getTasks(state, TaskState.BACK_LOG.key),
+    selectedTasks: getTasks(state, TaskState.SELECTED_DEVELOP.key),
+    inprogressTasks: getTasks(state, TaskState.INPROGRESS.key),
+    completedTasks: getTasks(state, TaskState.COMPLETED.key),
   }
 };
 
@@ -26,20 +26,20 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fe
 
   return (
       <div className="task-container">
-        <TaskColumn type={TaskState.BACK_LOG}
-          header="Back Log"
+        <TaskColumn type={TaskState.BACK_LOG.key}
+          header={TaskState.BACK_LOG.display}
           tasks={backLogTasks}
         />
-        <TaskColumn type={TaskState.SELECTED_DEVELOP}
-          header="Selected for Develop"
+        <TaskColumn type={TaskState.SELECTED_DEVELOP.key}
+          header={TaskState.SELECTED_DEVELOP.display}
           tasks={selectedTasks}
         />
-        <TaskColumn type={TaskState.INPROGRESS}
-          header="Inprogress"
+        <TaskColumn type={TaskState.INPROGRESS.key}
+          header={TaskState.INPROGRESS.display}
           tasks={inprogressTasks}
         />
-        <TaskColumn type={TaskState.COMPLETED}
-          header="Completed"
+        <TaskColumn type={TaskState.COMPLETED.key}
+          header={TaskState.COMPLETED.display}
           tasks={completedTasks}
         />
       </div>

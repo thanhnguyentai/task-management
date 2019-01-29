@@ -6,27 +6,27 @@ const fakeDatabase = {
             id: v4(),
             title: 'Task 1',
             description: 'Description',
-            state: TaskState.BACK_LOG
+            state: TaskState.BACK_LOG.key
         },{
             id: v4(),
             title: 'Task 2',
             description: 'Description',
-            state: TaskState.BACK_LOG
+            state: TaskState.BACK_LOG.key
         },{
             id: v4(),
             title: 'Task 3',
             description: 'Description',
-            state: TaskState.BACK_LOG
+            state: TaskState.BACK_LOG.key
         },{
             id: v4(),
             title: 'Task 4',
             description: 'Description',
-            state: TaskState.SELECTED_DEVELOP
+            state: TaskState.SELECTED_DEVELOP.key
         },{
             id: v4(),
             title: 'Task 5',
             description: 'Description',
-            state: TaskState.INPROGRESS
+            state: TaskState.INPROGRESS.key
         },
     ]
 };
