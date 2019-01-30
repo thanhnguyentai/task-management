@@ -1,4 +1,4 @@
-import {fetchTask} from '../service/taskService';
+import {getTasks} from '../service/taskService';
 
 export const TASK_ACTIONS = {
     ADD_TASK: 'ADD_TASK',
@@ -23,7 +23,7 @@ export const changeStateAction = (taskId, nextState) => {
 }
 
 export const fetchTaskAction = () => (dispatch, getState) => {
-    fetchTask().then(response => {
+    getTasks().then(response => {
         dispatch(fetchTaskSuccess(response));
     });
 };

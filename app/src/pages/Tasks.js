@@ -22,7 +22,6 @@ const mapDispatchToProps = {
 
 function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, fetchTaskAction, projectId}) {
   useEffect(() => {
-    console.log(projectId);
     fetchTaskAction();
   }, []);
 

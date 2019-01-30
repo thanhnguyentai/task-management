@@ -4,16 +4,22 @@ import {delay} from './taskService';
 const localStorageKey = "projects";
 
 const getFromStorage = function() {
-    return localStorage.getItem(localStorageKey);
+    const data = localStorage.getItem(localStorageKey);
+    if(data) {
+        return JSON.parse(data);
+    }
+
+    return null;
 }
 
 const saveToStorage = function(data) {
-    return localStorage.setItem(localStorageKey, data);
+    return localStorage.setItem(localStorageKey, JSON.stringify(data));
 }
 
 export const getProjects = () => {
     return delay(500).then(()=> {
-        return getFromStorage();
+        const projects = getFromStorage();
+        return projects || [];
     });
 };
 
@@ -21,10 +27,11 @@ export const addProject = (name, description) => {
     return delay(500).then(()=> {
         const project = {
             id: v4(),
-            name, description
+            name, description,
+            created: Date.now()
         };
     
-        let allProjects = getProjects();
+        let allProjects = getFromStorage();
         if(!allProjects) {
             allProjects = [];
         }
@@ -37,7 +44,7 @@ export const addProject = (name, description) => {
 
 export const deleteProject = (projectId) => {
     return delay(500).then(()=> {
-        const allProjects = getProjects();
+        const allProjects = getFromStorage();
         if(allProjects) {
             let indexItem = -1;
             for(let i=0; i<allProjects.length; i++) {
@@ -62,7 +69,7 @@ export const updateProject = (projectId, name, description) => {
             const newProjects = allProjects.map(project => {
                 if(project.id === projectId) {
                     return {
-                        id: projectId,
+                        ...project,
                         name, description
                     }
                 } else {
