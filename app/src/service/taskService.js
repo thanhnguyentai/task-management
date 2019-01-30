@@ -1,5 +1,4 @@
 import { v4 } from 'uuid';
-import TaskState from '../constant/task_state';
 
 export const delay = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -42,7 +41,7 @@ export const addTask = (projectId, title, description, state) => {
             created: Date.now()
         }
     
-        const allTasks = getFromStorage();
+        let allTasks = getFromStorage();
         if(!allTasks) {
             allTasks = [];
         }
