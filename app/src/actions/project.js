@@ -1,4 +1,4 @@
-import {getProjects} from '../service/projectService';
+import {getProjects, addProject, deleteProject} from '../service/projectService';
 
 export const PROJECT_ACTIONS = {
     ADD_PROJECT: 'ADD_PROJECT',
@@ -14,11 +14,22 @@ const fetchProjectSuccess = function(projects) {
     }
 }
 
-export const addProjectAction = (name, description) => {
-    return {
-        type: PROJECT_ACTIONS.ADD_PROJECT,
-        name, description
-    }
+export const addProjectAction = (name, description) => (dispatch, getState) => {
+    addProject(name, description).then(response => {
+        dispatch({
+            type: PROJECT_ACTIONS.ADD_PROJECT,
+            project: response
+        });
+    });
+}
+
+export const removeProjectAction = (id) => (dispatch, getState) => {
+    deleteProject(id).then(response => {
+        dispatch({
+            type: PROJECT_ACTIONS.REMOVE_PROJECT,
+            id: id
+        });
+    });
 }
 
 export const fetchProjectAction = () => (dispatch, getState) => {

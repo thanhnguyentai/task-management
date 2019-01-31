@@ -11,7 +11,6 @@ const changeStateOfTask = (state = [], action) => {
             };
         }
     });
-
 }
 
 export default function(state = [], action) {
