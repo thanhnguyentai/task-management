@@ -6,12 +6,24 @@
     }
 }
 .project-item {
-    position: relative;
-    padding-right: 20px;
+    &__content {
+        position: relative;
+        padding: 10px 20px 10px 0;
+
+        .header {
+            margin-bottom: 5px !important;
+            color: #4183c4!important;
+        }
+    }
 
     &__delete {
         position: absolute;
         top: 0px;
+        right: 0;
+    }
+    &__edit {
+        position: absolute;
+        top: 20px;
         right: 0;
     }
 }

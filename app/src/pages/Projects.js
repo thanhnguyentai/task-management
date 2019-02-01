@@ -1,18 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
+import {NavLink} from 'react-router-dom';
 import './Projects.scss';
 import { Button, Modal, Form, List, Icon, Confirm} from 'semantic-ui-react';
-import {addProjectAction, removeProjectAction, fetchProjectAction} from '../actions/project';
+import {addProjectAction, removeProjectAction, updateProjectAction, fetchProjectAction} from '../actions/project';
 import {getProjects} from '../reducers';
 
-const mapStateToProps = function(state) {
+const mapStateToProps = function(state, {match}) {
     return {
-        projects: getProjects(state)
+        projects: getProjects(state),
+        path: match.path
     }
 }
 
-function Projects({addProject, removeProject, fetchProjects, projects}) {
-    const [isShowModal, toggleModal] = useState(false);
+function Projects({addProject, removeProject, updateProject, fetchProjects, projects, path}) {
+    const [isCreatingProject, setIsCreatingProject] = useState(false);
+    const [isEditingProject, setIsEditingProject] = useState(false);
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [isShowRemoveConfirm, setShowConfirm] = useState(false);
@@ -22,8 +25,12 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
         fetchProjects();
     }, []);
 
-    const doToggleModal = function(){
-        toggleModal(!isShowModal);
+    const toggleModalCreatProject = function(){
+        setIsCreatingProject(!isCreatingProject);
+    }
+
+    const toggleModalEditProject = function(){
+        setIsEditingProject(!isEditingProject);
     }
 
     const onProjectNameChange = function(e, {value}){
@@ -38,11 +45,17 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
         const name = projectName.trim();
         const description = projectDescription.trim();
         if(name && description) {
-            doToggleModal();
+            toggleModalCreatProject();
             setProjectName('');
             setProjectDescription('');
             addProject(name, description);
         }
+    }
+
+    const cancelCreateProject = function() {
+        toggleModalCreatProject();
+        setProjectName('');
+        setProjectDescription('');
     }
 
     const showConfirmBeforeRemove = function(event) {
@@ -59,6 +72,33 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
         removeProject(selectedProject);
     }
 
+    const editProject = function(event) {
+        const id = event.target.dataset.project;
+        const project = projects.find(project => project.id === id);
+
+        setSelectedProject(id);
+        setProjectName(project.name);
+        setProjectDescription(project.description);
+        toggleModalEditProject();
+    }
+
+    const doUpdateProject = function() {
+        const name = projectName.trim();
+        const description = projectDescription.trim();
+        if(name && description) {
+            toggleModalEditProject();
+            setProjectName('');
+            setProjectDescription('');
+            updateProject(selectedProject, name, description);
+        }
+    }
+
+    const cancelEditProject = function() {
+        setProjectName('');
+        setProjectDescription('');
+        toggleModalEditProject();
+    }
+
     return (
         <div className="project-wrapper">
             <h3>Projects</h3>
@@ -68,12 +108,15 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
                         {
                             projects.map(project => {
                                 return (
-                                    <List.Item key={project.id}>
-                                        <List.Content className="project-item">
-                                            <List.Header as='a'>{project.name}</List.Header>
-                                            <List.Description as='a'>{project.description}</List.Description>
-                                            <Icon data-project={project.id} onClick={showConfirmBeforeRemove} link name='close' className="project-item__delete" />
-                                        </List.Content>
+                                    <List.Item key={project.id} className="project-item">
+                                            <List.Content className="project-item__content">
+                                                <NavLink to={path+"/"+project.id}>
+                                                    <List.Header as='h4'>{project.name}</List.Header>
+                                                    <List.Description as='div'>{project.description}</List.Description>
+                                                </NavLink>
+                                                <Icon data-project={project.id} onClick={showConfirmBeforeRemove} link name='close' className="project-item__delete" />
+                                                <Icon data-project={project.id} onClick={editProject} link name='edit' className="project-item__edit" />
+                                            </List.Content>
                                     </List.Item>
                                 );
                             })
@@ -81,7 +124,7 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
                     </List>
                 }
             </div>
-            <Button onClick={doToggleModal}>New Project</Button>
+            <Button onClick={toggleModalCreatProject}>New Project</Button>
 
             <Confirm
                 open={isShowRemoveConfirm}
@@ -90,7 +133,7 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
                 onConfirm={doRemoveProject}
             />
 
-            <Modal size="small" open={isShowModal}>
+            <Modal size="small" open={isCreatingProject}>
                 <Modal.Header>Add a new project</Modal.Header>
                 <Modal.Content>
                     <Form>
@@ -103,8 +146,26 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button onClick={createProject} color='green'>Yes</Button>
-                    <Button onClick={doToggleModal} color='grey'>Cancel</Button>
+                    <Button onClick={createProject} color='green'>Create</Button>
+                    <Button onClick={cancelCreateProject} color='grey'>Cancel</Button>
+                </Modal.Actions>
+            </Modal>
+
+            <Modal size="small" open={isEditingProject}>
+                <Modal.Header>Edit a project</Modal.Header>
+                <Modal.Content>
+                    <Form>
+                        <Form.Field>
+                            <Form.Input onChange={onProjectNameChange} placeholder="Name" value={projectName}/>
+                        </Form.Field>
+                        <Form.Field>
+                            <Form.TextArea onChange={onProjectDescriptionChange} placeholder="Description" value={projectDescription}/>
+                        </Form.Field>
+                    </Form>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={doUpdateProject} color='green'>Update</Button>
+                    <Button onClick={cancelEditProject} color='grey'>Cancel</Button>
                 </Modal.Actions>
             </Modal>
         </div>
@@ -114,5 +175,6 @@ function Projects({addProject, removeProject, fetchProjects, projects}) {
 export default connect(mapStateToProps, {
     addProject: addProjectAction,
     removeProject: removeProjectAction,
+    updateProject: updateProjectAction,
     fetchProjects: fetchProjectAction
 })(Projects);
