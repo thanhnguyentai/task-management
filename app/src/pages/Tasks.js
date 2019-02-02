@@ -1,4 +1,4 @@
-import React , {useEffect}from 'react';
+import React , {useEffect, useState}from 'react';
 import {Link} from 'react-router-dom';
 import './Tasks.scss';
 import TaskColumn from '../components/TaskColumn';
@@ -7,6 +7,7 @@ import TaskState from '../constant/task_state';
 import {fetchTaskAction} from '../actions/task';
 import {getProjectDetailAction} from '../actions/project';
 import {getTasksReducer, getProjectDetailReducer} from '../reducers';
+import {Button, Modal, Form, Confirm} from 'semantic-ui-react';
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -25,10 +26,30 @@ const mapDispatchToProps = {
 };
 
 function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, projectId, projectDetail, fetchTaskAction, getProjectDetailAction}) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [isEdittingTask, setIsEdittingTask] = useState(false);
+  const [isShowRemoveConfirm, setIsShowRemoveConfirm] = useState(false);
+
   useEffect(() => {
     fetchTaskAction();
     getProjectDetailAction(projectId);
   });
+
+  const onTitleChange = function(){}
+  const onDescriptionChange = function(){}
+
+  const openModalCreateTask = function() {}
+  const doCreateTask = function() {}
+  const cancelCreateTask = function() {}
+
+  const openModalEditTask = function(){}
+  const doUpdateTask = function(){}
+  const cancelEditTask = function() {}
+
+  const cancelRemoveTask = function() {}
+  const doRemoveTask = function() {}
 
   return (
       <div className="task-wrapper">
@@ -36,6 +57,7 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, pr
           <h3>
             <Link to="/projects">Projects</Link> / {projectDetail && projectDetail.name ? projectDetail.name : ""}
           </h3>
+          <Button onClick={openModalCreateTask} size="small" compact={true}>Create Task</Button>
         </div>
         <div className="task-container">
           <TaskColumn type={TaskState.BACK_LOG.key}
@@ -55,6 +77,49 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, pr
             tasks={completedTasks}
           />
         </div>
+
+        <Confirm
+            open={isShowRemoveConfirm}
+            content='Do you really want to delete this task?'
+            onCancel={cancelRemoveTask}
+            onConfirm={doRemoveTask}
+        />
+
+        <Modal size="small" open={isCreatingTask}>
+          <Modal.Header>Add a task</Modal.Header>
+          <Modal.Content>
+              <Form>
+                  <Form.Field>
+                      <Form.Input onChange={onTitleChange} placeholder="Name" value={title}/>
+                  </Form.Field>
+                  <Form.Field>
+                      <Form.TextArea onChange={onDescriptionChange} placeholder="Description" value={description}/>
+                  </Form.Field>
+              </Form>
+          </Modal.Content>
+          <Modal.Actions>
+              <Button onClick={doCreateTask} color='green'>Create</Button>
+              <Button onClick={cancelCreateTask} color='grey'>Cancel</Button>
+          </Modal.Actions>
+          </Modal>
+
+          <Modal size="small" open={isEdittingTask}>
+          <Modal.Header>Edit a task</Modal.Header>
+          <Modal.Content>
+              <Form>
+                  <Form.Field>
+                      <Form.Input onChange={onTitleChange} placeholder="Name" value={title}/>
+                  </Form.Field>
+                  <Form.Field>
+                      <Form.TextArea onChange={onDescriptionChange} placeholder="Description" value={description}/>
+                  </Form.Field>
+              </Form>
+          </Modal.Content>
+          <Modal.Actions>
+              <Button onClick={doUpdateTask} color='green'>Update</Button>
+              <Button onClick={cancelEditTask} color='grey'>Cancel</Button>
+          </Modal.Actions>
+          </Modal>
       </div>
   );
 }

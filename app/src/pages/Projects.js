@@ -130,7 +130,7 @@ function Projects({addProject, removeProject, updateProject, fetchProjects, rese
                     </List>
                 }
             </div>
-            <Button onClick={toggleModalCreatProject}>New Project</Button>
+            <Button size="small" compact={true} onClick={toggleModalCreatProject}>New Project</Button>
 
             <Confirm
                 open={isShowRemoveConfirm}
