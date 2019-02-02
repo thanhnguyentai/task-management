@@ -1,4 +1,5 @@
 import {TASK_ACTIONS} from '../actions/task';
+import {PROJECT_ACTIONS} from '../actions/project';
 
 const changeStateOfTask = (state = [], action) => {
     return state.map(task => {
@@ -23,6 +24,8 @@ export default function(state = [], action) {
             return changeStateOfTask(state, action);
         case TASK_ACTIONS.FETCH_TASKS_SUCCESS:
             return [...state, ...action.response];
+        case PROJECT_ACTIONS.RESET_SELECTED_PROJECT:
+            return [];
         default:
             return state;
     }

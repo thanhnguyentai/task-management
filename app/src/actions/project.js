@@ -1,10 +1,12 @@
-import {getProjects, addProject, deleteProject, updateProject} from '../service/projectService';
+import {getProjects, addProject, deleteProject, updateProject, getProjectDetail} from '../service/projectService';
 
 export const PROJECT_ACTIONS = {
     ADD_PROJECT: 'ADD_PROJECT',
     REMOVE_PROJECT: 'REMOVE_PROJECT',
     FETCH_PROJECTS_SUCCESS: 'FETCH_PROJECTS_SUCCESS',
-    UPDATE_PROJECT: 'UPDATE_PROJECT'
+    UPDATE_PROJECT: 'UPDATE_PROJECT',
+    DETAIL_PROJECT: 'DETAIL_PROJECT',
+    RESET_SELECTED_PROJECT: 'RESET_SELECTED_PROJECT'
 };
 
 const fetchProjectSuccess = function(projects) {
@@ -48,3 +50,26 @@ export const fetchProjectAction = () => (dispatch, getState) => {
         dispatch(fetchProjectSuccess(response));
     });
 };
+
+export const getProjectDetailAction = (projectId) => (dispatch, getState) => {
+    const projects = getState().project;
+    if(projects && projects.length > 0) {
+        dispatch({
+            type: PROJECT_ACTIONS.DETAIL_PROJECT,
+            project: projects.find(project => project.id === projectId)
+        });
+    } else {
+        getProjectDetail(projectId).then(response => {
+            dispatch({
+                type: PROJECT_ACTIONS.DETAIL_PROJECT,
+                project: response
+            });
+        })
+    }
+}
+
+export const resetSelectedProjectAction = () => {
+    return {
+        type: PROJECT_ACTIONS.RESET_SELECTED_PROJECT
+    }
+}

@@ -81,3 +81,14 @@ export const updateProject = (projectId, name, description) => {
         }
     });
 };
+
+export const getProjectDetail = (projectId) => {
+    return delay(500).then(()=> {
+        const allProjects = getFromStorage();
+        if(allProjects) {
+            return allProjects.find(project => project.id === projectId);
+        } else {
+            return null;
+        }
+    });
+}

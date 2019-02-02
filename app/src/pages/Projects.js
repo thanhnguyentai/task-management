@@ -3,17 +3,19 @@ import {connect} from 'react-redux';
 import {NavLink} from 'react-router-dom';
 import './Projects.scss';
 import { Button, Modal, Form, List, Icon, Confirm} from 'semantic-ui-react';
-import {addProjectAction, removeProjectAction, updateProjectAction, fetchProjectAction} from '../actions/project';
-import {getProjects} from '../reducers';
+import {addProjectAction, removeProjectAction, 
+    updateProjectAction, fetchProjectAction,
+    resetSelectedProjectAction} from '../actions/project';
+import {getProjectsReducer} from '../reducers';
 
 const mapStateToProps = function(state, {match}) {
     return {
-        projects: getProjects(state),
+        projects: getProjectsReducer(state),
         path: match.path
     }
 }
 
-function Projects({addProject, removeProject, updateProject, fetchProjects, projects, path}) {
+function Projects({addProject, removeProject, updateProject, fetchProjects, resetSelectedProject, projects, path}) {
     const [isCreatingProject, setIsCreatingProject] = useState(false);
     const [isEditingProject, setIsEditingProject] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -24,6 +26,10 @@ function Projects({addProject, removeProject, updateProject, fetchProjects, proj
     useEffect(() => {
         fetchProjects();
     }, []);
+
+    useEffect(() => {
+        resetSelectedProject();
+    });
 
     const toggleModalCreatProject = function(){
         setIsCreatingProject(!isCreatingProject);
@@ -176,5 +182,6 @@ export default connect(mapStateToProps, {
     addProject: addProjectAction,
     removeProject: removeProjectAction,
     updateProject: updateProjectAction,
-    fetchProjects: fetchProjectAction
+    fetchProjects: fetchProjectAction,
+    resetSelectedProject: resetSelectedProjectAction
 })(Projects);
