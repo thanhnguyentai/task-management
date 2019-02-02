@@ -4,7 +4,7 @@ import './Tasks.scss';
 import TaskColumn from '../components/TaskColumn';
 import {connect} from 'react-redux';
 import TaskState from '../constant/task_state';
-import {fetchTaskAction} from '../actions/task';
+import {fetchTasksAction} from '../actions/task';
 import {getProjectDetailAction} from '../actions/project';
 import {getTasksReducer, getProjectDetailReducer} from '../reducers';
 import {Button, Modal, Form, Confirm} from 'semantic-ui-react';
@@ -21,11 +21,11 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = {
-  fetchTaskAction,
+  fetchTasksAction,
   getProjectDetailAction
 };
 
-function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, projectId, projectDetail, fetchTaskAction, getProjectDetailAction}) {
+function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, projectId, projectDetail, fetchTasksAction, getProjectDetailAction}) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isCreatingTask, setIsCreatingTask] = useState(false);
@@ -33,16 +33,24 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, pr
   const [isShowRemoveConfirm, setIsShowRemoveConfirm] = useState(false);
 
   useEffect(() => {
-    fetchTaskAction();
+    fetchTasksAction();
     getProjectDetailAction(projectId);
   });
 
-  const onTitleChange = function(){}
-  const onDescriptionChange = function(){}
+  const onTitleChange = function(event, {value}){
+    setTitle(value);
+  }
+  const onDescriptionChange = function(event, {value}){
+    setDescription(value);
+  }
 
-  const openModalCreateTask = function() {}
+  const openModalCreateTask = function() {
+    setIsCreatingTask(true);
+  }
   const doCreateTask = function() {}
-  const cancelCreateTask = function() {}
+  const cancelCreateTask = function() {
+    setIsCreatingTask(false);
+  }
 
   const openModalEditTask = function(){}
   const doUpdateTask = function(){}

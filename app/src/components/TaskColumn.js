@@ -3,12 +3,12 @@ import TaskItem from './TaskItem';
 import {ITEM_TYPES} from './TaskItem';
 import {DropTarget} from 'react-dnd';
 import {connect} from 'react-redux';
-import {changeStateAction} from '../actions/task';
+import {updateTaskAction} from '../actions/task';
 
 const columnTarget = {
     drop(props, monitor) {
         if(props.type !== monitor.getItem().state) {
-            props.changeStateAction(monitor.getItem().id, props.type);
+            props.updateTaskAction(monitor.getItem().id, monitor.getItem().title, monitor.getItem().description, props.type);
         }
     }
 }
@@ -39,5 +39,5 @@ function TaskColumn({type, header, tasks, connectDropTarget, isOver}) {
 }
 
 export default connect(null,{
-    changeStateAction
+    updateTaskAction
 })(DropTarget(ITEM_TYPES.TASK, columnTarget, collect)(TaskColumn));

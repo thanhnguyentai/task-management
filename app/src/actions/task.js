@@ -1,29 +1,50 @@
-import {getTasks} from '../service/taskService';
+import {getTasks, addTask, removeTask, updateTask} from '../service/taskService';
 
 export const TASK_ACTIONS = {
     ADD_TASK: 'ADD_TASK',
     REMOVE_TASK: 'REMOVE_TASK',
     FETCH_TASKS_SUCCESS: 'FETCH_TASKS_SUCCESS',
-    CHANGE_STATE: 'CHANGE_STATE'
+    UPDATE_TASK: 'UPDATE_TASK'
 };
 
-const fetchTaskSuccess = function(tasks) {
+const fetchTasksSuccess = function(tasks) {
     return {
         type: TASK_ACTIONS.FETCH_TASKS_SUCCESS,
         response: tasks
     }
 }
 
-export const changeStateAction = (taskId, nextState) => {
-    return {
-        type: TASK_ACTIONS.CHANGE_STATE,
-        taskId,
-        nextState
-    }
-}
-
-export const fetchTaskAction = () => (dispatch, getState) => {
+export const fetchTasksAction = () => (dispatch, getState) => {
     getTasks().then(response => {
-        dispatch(fetchTaskSuccess(response));
+        dispatch(fetchTasksSuccess(response));
     });
 };
+
+export const addTaskAction = (title, description, projectId) => (dispatch, getState) => {
+    addTask(projectId, title, description).then(response => {
+        dispatch({
+            type: TASK_ACTIONS.ADD_TASK,
+            task: response
+        });
+    });
+}
+
+export const updateTaskAction = (id, title, description, state) => (dispatch, getState) => {
+    updateTask(id, title, description, state).then(() => {
+        dispatch({
+            type: TASK_ACTIONS.UPDATE_TASK,
+            task: {
+                id, title, description, state
+            }
+        });
+    });
+}
+
+export const removeTaskAction = (id) => (dispatch, getState) => {
+    removeTask(id).then(() => {
+        dispatch({
+            type: TASK_ACTIONS.REMOVE_TASK,
+            id: id
+        });
+    });
+}

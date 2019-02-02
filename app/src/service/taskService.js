@@ -46,12 +46,13 @@ export const addTask = (projectId, title, description, state) => {
             allTasks = [];
         }
         allTasks.push(task);
-    
         saveToStorage(allTasks);
+
+        return task;
     });
 }
 
-export const deleteTask = (taskId) => {
+export const removeTask = (taskId) => {
     return delay(500).then(()=> {
         const allTasks = getFromStorage();
         if(allTasks) {
