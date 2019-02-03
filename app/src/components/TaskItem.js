@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './TaskItem.scss';
 import { DragSource } from 'react-dnd';
+import {Icon} from 'semantic-ui-react';
 
 export const ITEM_TYPES = {
     TASK: 'TASK'
@@ -25,10 +26,16 @@ function collect(connect, monitor) {
 }
 
 function TaskItem({isDragging, connectDragSource, title, description}) {
+    const [isExpand, setIsExpand] = useState(false);
+
+    const toggleDescription = function() {
+        setIsExpand(!isExpand);
+    }
+
     return connectDragSource(
         <div className="task-item" style={{opacity: isDragging ? 0.5 : 1}}>
-            <div className="task-item-title">{title}</div>
-            <div className="task-item-description">{description}</div>
+            <div onClick={toggleDescription} className="task-item-title">{title} <Icon name={isExpand ? "angle up" : "angle down"}/></div>
+            {isExpand && <div className="task-item-description">{description}</div>}
         </div>
     );
 }
