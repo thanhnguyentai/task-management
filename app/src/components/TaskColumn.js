@@ -21,10 +21,15 @@ const collect = function(connect, monitor) {
     }
 }
 
-function TaskColumn({onEdit, header, tasks, connectDropTarget, isOver}) {
+function TaskColumn({onEdit, onRemove, header, tasks, connectDropTarget, isOver}) {
     const doEdit = function(taskId) {
         const task = tasks.find(task => task.id === taskId);
         onEdit(task);
+    }
+
+    const doRemove = function(taskId) {
+        const task = tasks.find(task => task.id === taskId);
+        onRemove(task);
     }
 
     return connectDropTarget(
@@ -33,7 +38,8 @@ function TaskColumn({onEdit, header, tasks, connectDropTarget, isOver}) {
             <div className={isOver ? "drag-over task-column-items" : "task-column-items"}>
                 {tasks && tasks.map(task => {
                     return <TaskItem key={task.id}
-                        onEdit={doEdit}  
+                        onEdit={doEdit}
+                        onRemove={doRemove}
                         id={task.id}
                         title={task.title} 
                         description={task.description}

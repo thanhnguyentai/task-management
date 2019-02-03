@@ -4,7 +4,7 @@ import './Tasks.scss';
 import TaskColumn from '../components/TaskColumn';
 import {connect} from 'react-redux';
 import TaskState from '../constant/task_state';
-import {fetchTasksAction, addTaskAction, updateTaskAction} from '../actions/task';
+import {fetchTasksAction, addTaskAction, updateTaskAction, removeTaskAction} from '../actions/task';
 import {getProjectDetailAction} from '../actions/project';
 import {getTasksReducer, getProjectDetailReducer, getTaskUpToDateReducer} from '../reducers';
 import {Button, Modal, Form, Confirm} from 'semantic-ui-react';
@@ -25,13 +25,14 @@ const mapDispatchToProps = {
   fetchTasksAction,
   getProjectDetailAction,
   addTaskAction,
-  updateTaskAction
+  updateTaskAction,
+  removeTaskAction
 };
 
 function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, 
     taskUpToDate, projectId, projectDetail, 
     fetchTasksAction, getProjectDetailAction, 
-    addTaskAction, updateTaskAction}) {
+    addTaskAction, updateTaskAction, removeTaskAction}) {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   const [selectedTask, setSelectedTask] = useState(null);
@@ -94,8 +95,17 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks,
     setIsEdittingTask(false);
   }
 
-  const cancelRemoveTask = function() {}
-  const doRemoveTask = function() {}
+  const showConfirmBeforeRemove = function(task) {
+    setSelectedTask(task);
+    setIsShowRemoveConfirm(true);
+  }
+  const cancelRemoveTask = function() {
+    setIsShowRemoveConfirm(false);
+  }
+  const doRemoveTask = function() {
+    removeTaskAction(selectedTask.id);
+    setIsShowRemoveConfirm(false);
+  }
 
   return (
       <div className="task-wrapper">
@@ -106,19 +116,23 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks,
           <Button onClick={openModalCreateTask} size="small" compact={true}>Create Task</Button>
         </div>
         <div className="task-container">
-          <TaskColumn onEdit={openModalEditTask} type={TaskState.BACK_LOG.key}
+          <TaskColumn onEdit={openModalEditTask} onRemove={showConfirmBeforeRemove}
+            type={TaskState.BACK_LOG.key}
             header={TaskState.BACK_LOG.display}
             tasks={backLogTasks}
           />
-          <TaskColumn onEdit={openModalEditTask} type={TaskState.SELECTED_DEVELOP.key}
+          <TaskColumn onEdit={openModalEditTask} onRemove={showConfirmBeforeRemove}
+            type={TaskState.SELECTED_DEVELOP.key}
             header={TaskState.SELECTED_DEVELOP.display}
             tasks={selectedTasks}
           />
-          <TaskColumn onEdit={openModalEditTask} type={TaskState.INPROGRESS.key}
+          <TaskColumn onEdit={openModalEditTask} onRemove={showConfirmBeforeRemove}
+            type={TaskState.INPROGRESS.key}
             header={TaskState.INPROGRESS.display}
             tasks={inprogressTasks}
           />
-          <TaskColumn onEdit={openModalEditTask} type={TaskState.COMPLETED.key}
+          <TaskColumn onEdit={openModalEditTask} onRemove={showConfirmBeforeRemove}
+            type={TaskState.COMPLETED.key}
             header={TaskState.COMPLETED.display}
             tasks={completedTasks}
           />

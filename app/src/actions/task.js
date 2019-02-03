@@ -26,14 +26,17 @@ export const addTaskAction = (projectId, title, description, state) => (dispatch
 
 export const updateTaskAction = (id, title, description, state) => (dispatch, getState) => {
     const taskBeforeUpdate = getATaskReducer(getState(), id);
+
     dispatch({
         type: TASK_ACTIONS.UPDATE_TASK,
         task: {
             id, title, description, state
         }
     });
+
     updateTask(id, title, description, state)
     .catch((error) => {
+        console.log(error);
         dispatch({
             type: TASK_ACTIONS.UPDATE_TASK,
             task: taskBeforeUpdate
@@ -42,10 +45,19 @@ export const updateTaskAction = (id, title, description, state) => (dispatch, ge
 }
 
 export const removeTaskAction = (id) => (dispatch, getState) => {
-    removeTask(id).then(() => {
-        dispatch({
-            type: TASK_ACTIONS.REMOVE_TASK,
-            id: id
-        });
+    const taskBeforeRemove = getATaskReducer(getState(), id);
+
+    dispatch({
+        type: TASK_ACTIONS.REMOVE_TASK,
+        id: id
     });
+
+    removeTask(id)
+    .catch(error => {
+        console.log(error);
+        dispatch({
+            type: TASK_ACTIONS.ADD_TASK,
+            task: taskBeforeRemove
+        });
+    })
 }
