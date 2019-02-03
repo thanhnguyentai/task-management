@@ -7,8 +7,9 @@ import {updateTaskAction} from '../actions/task';
 
 const columnTarget = {
     drop(props, monitor) {
-        if(props.type !== monitor.getItem().state) {
-            props.updateTaskAction(monitor.getItem().id, monitor.getItem().title, monitor.getItem().description, props.type);
+        const task = monitor.getItem();
+        if(props.type !== task.state) {
+            props.updateTaskAction(task.id, task.title, task.description, props.type);
         }
     }
 }

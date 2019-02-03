@@ -14,14 +14,14 @@ const fetchTasksSuccess = function(tasks) {
     }
 }
 
-export const fetchTasksAction = () => (dispatch, getState) => {
-    getTasks().then(response => {
+export const fetchTasksAction = (projectId) => (dispatch, getState) => {
+    getTasks(projectId).then(response => {
         dispatch(fetchTasksSuccess(response));
     });
 };
 
-export const addTaskAction = (title, description, projectId) => (dispatch, getState) => {
-    addTask(projectId, title, description).then(response => {
+export const addTaskAction = (projectId, title, description, state) => (dispatch, getState) => {
+    addTask(projectId, title, description, state).then(response => {
         dispatch({
             type: TASK_ACTIONS.ADD_TASK,
             task: response
