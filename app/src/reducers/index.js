@@ -28,5 +28,5 @@ export const getProjectDetailReducer = function(state) {
 }
 
 export const getATaskReducer = function(state, taskId) {
-    //return getATask(state.tasks, taskId);
+    return getATask(state.tasks, taskId);
 }
