@@ -21,13 +21,19 @@ const collect = function(connect, monitor) {
     }
 }
 
-function TaskColumn({type, header, tasks, connectDropTarget, isOver}) {
+function TaskColumn({onEdit, header, tasks, connectDropTarget, isOver}) {
+    const doEdit = function(taskId) {
+        const task = tasks.find(task => task.id === taskId);
+        onEdit(task);
+    }
+
     return connectDropTarget(
         <div className="task-column">
             <div className="task-column-header">{tasks && tasks.length > 0 ? <b>{tasks.length} - </b> : null}{header}</div>
             <div className={isOver ? "drag-over task-column-items" : "task-column-items"}>
                 {tasks && tasks.map(task => {
-                    return <TaskItem key={task.id}  
+                    return <TaskItem key={task.id}
+                        onEdit={doEdit}  
                         id={task.id}
                         title={task.title} 
                         description={task.description}

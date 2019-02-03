@@ -4,7 +4,7 @@ import './Tasks.scss';
 import TaskColumn from '../components/TaskColumn';
 import {connect} from 'react-redux';
 import TaskState from '../constant/task_state';
-import {fetchTasksAction, addTaskAction} from '../actions/task';
+import {fetchTasksAction, addTaskAction, updateTaskAction} from '../actions/task';
 import {getProjectDetailAction} from '../actions/project';
 import {getTasksReducer, getProjectDetailReducer, getTaskUpToDateReducer} from '../reducers';
 import {Button, Modal, Form, Confirm} from 'semantic-ui-react';
@@ -24,12 +24,17 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
   fetchTasksAction,
   getProjectDetailAction,
-  addTaskAction
+  addTaskAction,
+  updateTaskAction
 };
 
-function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, taskUpToDate, projectId, projectDetail, fetchTasksAction, getProjectDetailAction, addTaskAction}) {
+function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, 
+    taskUpToDate, projectId, projectDetail, 
+    fetchTasksAction, getProjectDetailAction, 
+    addTaskAction, updateTaskAction}) {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [isEdittingTask, setIsEdittingTask] = useState(false);
   const [isShowRemoveConfirm, setIsShowRemoveConfirm] = useState(false);
@@ -68,9 +73,26 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, ta
     setIsCreatingTask(false);
   }
 
-  const openModalEditTask = function(){}
-  const doUpdateTask = function(){}
-  const cancelEditTask = function() {}
+  const openModalEditTask = function(task){
+    setSelectedTask(task);
+    setTaskTitle(task.title);
+    setTaskDescription(task.description);
+    setIsEdittingTask(true);
+  }
+  const doUpdateTask = function(){
+    const title = taskTitle.trim();
+    const description = taskDescription.trim();
+
+    if(title) {
+      setTaskTitle('');
+      setTaskDescription('');
+      updateTaskAction(selectedTask.id, title, description, selectedTask.state);
+      setIsEdittingTask(false);
+    }
+  }
+  const cancelEditTask = function() {
+    setIsEdittingTask(false);
+  }
 
   const cancelRemoveTask = function() {}
   const doRemoveTask = function() {}
@@ -84,19 +106,19 @@ function Tasks({backLogTasks, selectedTasks, inprogressTasks, completedTasks, ta
           <Button onClick={openModalCreateTask} size="small" compact={true}>Create Task</Button>
         </div>
         <div className="task-container">
-          <TaskColumn type={TaskState.BACK_LOG.key}
+          <TaskColumn onEdit={openModalEditTask} type={TaskState.BACK_LOG.key}
             header={TaskState.BACK_LOG.display}
             tasks={backLogTasks}
           />
-          <TaskColumn type={TaskState.SELECTED_DEVELOP.key}
+          <TaskColumn onEdit={openModalEditTask} type={TaskState.SELECTED_DEVELOP.key}
             header={TaskState.SELECTED_DEVELOP.display}
             tasks={selectedTasks}
           />
-          <TaskColumn type={TaskState.INPROGRESS.key}
+          <TaskColumn onEdit={openModalEditTask} type={TaskState.INPROGRESS.key}
             header={TaskState.INPROGRESS.display}
             tasks={inprogressTasks}
           />
-          <TaskColumn type={TaskState.COMPLETED.key}
+          <TaskColumn onEdit={openModalEditTask} type={TaskState.COMPLETED.key}
             header={TaskState.COMPLETED.display}
             tasks={completedTasks}
           />

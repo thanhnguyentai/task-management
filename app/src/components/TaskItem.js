@@ -25,11 +25,15 @@ function collect(connect, monitor) {
     }
 }
 
-function TaskItem({isDragging, connectDragSource, title, description}) {
+function TaskItem({isDragging, connectDragSource, id, title, description, onEdit}) {
     const [isExpand, setIsExpand] = useState(false);
 
     const toggleDescription = function() {
         setIsExpand(!isExpand);
+    }
+
+    const editTask = function(event) {
+        onEdit(event.target.dataset.task);
     }
 
     return connectDragSource(
@@ -37,8 +41,8 @@ function TaskItem({isDragging, connectDragSource, title, description}) {
             <div onClick={toggleDescription} className="task-item__title">{title} <Icon name={isExpand ? "angle up" : "angle down"}/></div>
             {isExpand && <div className="task-item__description">{description}</div>}
             {isExpand && <div className="task-item__actions-container">
-                <Icon size="small" link name='close'/>
-                <Icon size="small" link name='edit'/>
+                <Icon data-task={id} size="small" link name='close'/>
+                <Icon data-task={id} onClick={editTask} size="small" link name='edit'/>
             </div>}
         </div>
     );
