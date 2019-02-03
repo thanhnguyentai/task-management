@@ -34,8 +34,12 @@ function TaskItem({isDragging, connectDragSource, title, description}) {
 
     return connectDragSource(
         <div className="task-item" style={{opacity: isDragging ? 0.5 : 1}}>
-            <div onClick={toggleDescription} className="task-item-title">{title} <Icon name={isExpand ? "angle up" : "angle down"}/></div>
-            {isExpand && <div className="task-item-description">{description}</div>}
+            <div onClick={toggleDescription} className="task-item__title">{title} <Icon name={isExpand ? "angle up" : "angle down"}/></div>
+            {isExpand && <div className="task-item__description">{description}</div>}
+            {isExpand && <div className="task-item__actions-container">
+                <Icon size="small" link name='close'/>
+                <Icon size="small" link name='edit'/>
+            </div>}
         </div>
     );
 }

@@ -3,15 +3,19 @@
     border: 1px solid #ccc;
     padding: 5px;
     margin-top: -1px;
+    position: relative;
 
-    &-title {
+    &__title {
         color: #000;
         font-size: 14px;
         color: cornflowerblue;
     }
-    &-description {
+    &__description {
         color: #333;
         font-size: 12px;
+    }
+    &__actions-container {
+        text-align: right;
     }
 }
 .btn-add-item {
