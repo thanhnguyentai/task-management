@@ -1,5 +1,5 @@
-import {TASK_ACTIONS} from '../actions/task';
-import {PROJECT_ACTIONS} from '../actions/project';
+import TASK_ACTIONS from '../actions/taskAction';
+import PROJECT_ACTIONS from '../actions/projectAction';
 
 const updateTask = (state = [], action) => {
     return state.map(task => {
@@ -39,4 +39,8 @@ export default function(state = [], action) {
 
 export const getTasksByState = function(state, taskState) {
     return state.filter(task => task.state === taskState);
+}
+
+export const getATask = function(state, taskId) {
+    return state.find(task => task.id === taskId);
 }

@@ -1,11 +1,6 @@
 import {getTasks, addTask, removeTask, updateTask} from '../service/taskService';
-
-export const TASK_ACTIONS = {
-    ADD_TASK: 'ADD_TASK',
-    REMOVE_TASK: 'REMOVE_TASK',
-    FETCH_TASKS_SUCCESS: 'FETCH_TASKS_SUCCESS',
-    UPDATE_TASK: 'UPDATE_TASK'
-};
+import TASK_ACTIONS from './taskAction';
+import {getATaskReducer} from '../reducers';
 
 const fetchTasksSuccess = function(tasks) {
     return {
@@ -30,14 +25,20 @@ export const addTaskAction = (projectId, title, description, state) => (dispatch
 }
 
 export const updateTaskAction = (id, title, description, state) => (dispatch, getState) => {
-    updateTask(id, title, description, state).then(() => {
+    const taskBeforeUpdate = getATaskReducer(getState(), id);
+    dispatch({
+        type: TASK_ACTIONS.UPDATE_TASK,
+        task: {
+            id, title, description, state
+        }
+    });
+    updateTask(id, title, description, state)
+    .catch((error) => {
         dispatch({
             type: TASK_ACTIONS.UPDATE_TASK,
-            task: {
-                id, title, description, state
-            }
+            task: taskBeforeUpdate
         });
-    });
+    })
 }
 
 export const removeTaskAction = (id) => (dispatch, getState) => {

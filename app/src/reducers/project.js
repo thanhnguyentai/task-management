@@ -1,4 +1,4 @@
-import {PROJECT_ACTIONS} from '../actions/project';
+import PROJECT_ACTIONS from '../actions/projectAction';
 
 export default function(state = {}, action) {
     switch(action.type) {

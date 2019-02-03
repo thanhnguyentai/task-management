@@ -1,5 +1,5 @@
-import {PROJECT_ACTIONS} from '../actions/project';
-import {TASK_ACTIONS} from '../actions/task';
+import PROJECT_ACTIONS from '../actions/projectAction';
+import TASK_ACTIONS from '../actions/taskAction';
 
 export default function(state = false, action) {
     switch(action.type) {

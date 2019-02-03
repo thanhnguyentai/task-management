@@ -1,13 +1,6 @@
 import {getProjects, addProject, deleteProject, updateProject, getProjectDetail} from '../service/projectService';
-
-export const PROJECT_ACTIONS = {
-    ADD_PROJECT: 'ADD_PROJECT',
-    REMOVE_PROJECT: 'REMOVE_PROJECT',
-    FETCH_PROJECTS_SUCCESS: 'FETCH_PROJECTS_SUCCESS',
-    UPDATE_PROJECT: 'UPDATE_PROJECT',
-    DETAIL_PROJECT: 'DETAIL_PROJECT',
-    RESET_SELECTED_PROJECT: 'RESET_SELECTED_PROJECT'
-};
+import {getProjectDetailReducer} from '../reducers';
+import PROJECT_ACTIONS from './projectAction';
 
 const fetchProjectSuccess = function(projects) {
     return {
@@ -52,7 +45,7 @@ export const fetchProjectAction = () => (dispatch, getState) => {
 };
 
 export const getProjectDetailAction = (projectId) => (dispatch, getState) => {
-    const projects = getState().project;
+    const projects = getProjectDetailReducer(getState());
     if(projects && projects.length > 0) {
         dispatch({
             type: PROJECT_ACTIONS.DETAIL_PROJECT,

@@ -1,4 +1,4 @@
-import {PROJECT_ACTIONS} from '../actions/project';
+import PROJECT_ACTIONS from '../actions/projectAction';
 
 const removeProject = (state = [], action) => {
     return state.filter(project => project.id !== action.id);

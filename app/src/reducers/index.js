@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import tasks, {getTasksByState} from './tasks';
+import tasks, {getTasksByState, getATask} from './tasks';
 import taskUpToDate from './taskUpToDate';
 import projects from './projects';
 import project from './project';
@@ -25,4 +25,8 @@ export const getProjectsReducer = function(state) {
 
 export const getProjectDetailReducer = function(state) {
     return state.project;
+}
+
+export const getATaskReducer = function(state, taskId) {
+    //return getATask(state.tasks, taskId);
 }
