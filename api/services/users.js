@@ -88,7 +88,13 @@ class UserService {
                     email: email,
                     password: md5(password)
                 }).then(doc => {
-                    resolve(doc);
+                    if(doc) {
+                        resolve(doc);
+                    } else {
+                        reject({
+                            error: 'Cannot login, email or password is wrong.'
+                        });    
+                    }
                 }).catch(err => {
                     reject({
                         error: 'Cannot login, email or password is wrong.'

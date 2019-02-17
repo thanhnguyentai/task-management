@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 
 const indexRouter = require('./routes/index');
 const projectsRouter = require('./routes/projects');
-const apiRouter = require('./routes/api');
+const apiUserRouter = require('./routes/users');
 
 import './services/database';
 
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/projects', projectsRouter);
-app.use('/api', apiRouter);
+app.use('/api/user', apiUserRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
