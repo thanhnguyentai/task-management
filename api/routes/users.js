@@ -11,16 +11,23 @@ const LOGIN_COOKIE_MAXAGE = 30*24*60*60*1000;
  */
 
 router.get('/isloggin', function(req, res, next){
-  const user = req.signedCookies;
-  if(user._id) {
-    res.json({
-      isLoggin: true
-    });
-  } else {
+  try {
+    const user = req.signedCookies;
+    if(user._id) {
+      res.json({
+        isLoggin: true
+      });
+    } else {
+      res.status(401);
+      res.json({
+        isLoggin: true
+      });
+    }
+  } catch(err) {
     res.status(401);
-    res.json({
-      isLoggin: true
-    });
+      res.json({
+        isLoggin: true
+      });
   }
 });
 /**
@@ -29,16 +36,24 @@ router.get('/isloggin', function(req, res, next){
 router.get('/', function(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
+  
   UserService.login(email, password)
   .then(doc => {
-    res.cookie(LOGIN_COOKIE, doc, {
+    res.cookie(LOGIN_COOKIE_NAME, doc, {
       maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
       httpOnly: true,
       signed: true
     });
 
-    res.json(doc);
+    const user = {
+      id: doc._id,
+      name: doc.name,
+      email: doc.email
+    };
+
+    res.json(user);
   }).catch(err => {
+    console.log(err);
     res.status(401);
     res.json(err);
   });
@@ -52,13 +67,20 @@ router.post('/', function(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
 
-  UserService.create(name, email, password).then(newUser => {
-    res.cookie(LOGIN_COOKIE, doc, {
+  UserService.create(name, email, password).then(doc => {
+    res.cookie(LOGIN_COOKIE_NAME, doc, {
       maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
       httpOnly: true,
       signed: true
     });
-    res.json(newUser);
+
+    const user = {
+      id: doc._id,
+      name: doc.name,
+      email: doc.email
+    };
+    
+    res.json(user);
   }).catch(err => {
     res.status(500);
     res.json(err);
