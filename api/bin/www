@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+require('babel-register')({
+  presets: ['env']
+});
+
 /**
  * Module dependencies.
  */

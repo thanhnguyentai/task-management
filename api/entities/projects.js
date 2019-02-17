@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 const projectSchema = new mongoose.Schema({
-    id: mongoose.Schema.Types.ObjectId,
     createdBy: mongoose.Schema.Types.ObjectId,
     name: String,
     description: String,
