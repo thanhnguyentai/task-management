@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cookieParserSecret = "secret-key-cookie-parser";
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const projectsRouter = require('./routes/projects');
@@ -18,6 +19,10 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000'
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
