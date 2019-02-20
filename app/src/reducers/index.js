@@ -3,12 +3,14 @@ import tasks, {getTasksByState, getATask} from './tasks';
 import taskUpToDate from './taskUpToDate';
 import projects from './projects';
 import project from './project';
+import user from './user';
 
 export default combineReducers({
     tasks,
     projects,
     project,
-    taskUpToDate
+    taskUpToDate,
+    user
 });
 
 export const getTasksReducer = function(state, taskState) {
@@ -29,4 +31,8 @@ export const getProjectDetailReducer = function(state) {
 
 export const getATaskReducer = function(state, taskId) {
     return getATask(state.tasks, taskId);
+}
+
+export const getUserData = function(state) {
+    return state.user;
 }

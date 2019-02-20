@@ -33,7 +33,7 @@ function Login(props) {
         if(email && password) {
             UserService.login(email, password).then(data => {
                 if(data.id) {
-                    props.onLogin();
+                    props.onLogin(data);
                 }
             }).catch(err => {
                 console.log(err.response);

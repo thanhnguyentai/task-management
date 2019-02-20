@@ -6,23 +6,31 @@ import Projects from './pages/Projects';
 import UserService from './service/userService';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
 import { Dimmer, Loader } from 'semantic-ui-react';
+import {connect} from 'react-redux';
+import {setUserInfoAction} from './actions/user';
+import {getUserData} from './reducers';
 
-function App() {
-  const [isLogin, setLogin] = useState(false);
+function mapStateToProps(state) {
+  return {
+    user: getUserData(state)
+  }
+}
+
+function App({setUserInfo, user}) {
   const [isChecking, setIsChecking] = useState(true);
   useEffect(() => {
-    UserService.isLoggin().then(data => {
-      if(data.isLoggin) {
-        setLogin(true);
-      } else {
-        setLogin(false);
+    UserService.checkSession().then(data => {
+      setIsChecking(false);
+      if(data.id) {
+        setUserInfo(data);
       }
+    }).catch(err => {
       setIsChecking(false);
     });
   }, []);
 
-  const onLogin = function() {
-    setLogin(true);
+  const onLogin = function(data) {
+    setUserInfo(data);
   }
 
   return (
@@ -33,7 +41,7 @@ function App() {
           <Loader inverted>Loading</Loader>
         </Dimmer>
       }
-      { !isChecking && !isLogin &&
+      { !isChecking && (!user || !user.id) &&
         <Router>
           <Switch>
             <Route path="/" exact render={() => (<Login onLogin={onLogin}/>)}></Route>
@@ -41,7 +49,7 @@ function App() {
           </Switch>
         </Router>
       }
-      { !isChecking && isLogin && 
+      { !isChecking && (user && user.id) && 
         <Router>
           <Switch>
             <Route path="/projects" exact component={Projects}/>
@@ -54,4 +62,6 @@ function App() {
   );
 }
 
-export default App;
+export default connect(mapStateToProps, {
+  setUserInfo: setUserInfoAction
+})(App);

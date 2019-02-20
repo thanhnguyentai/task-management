@@ -10,16 +10,20 @@ const LOGIN_COOKIE_MAXAGE = 30*24*60*60*1000;
  * Check if a user has already logged in
  */
 
-router.get('/isloggin', function(req, res, next){
+router.get('/session', function(req, res, next){
   try {
-    const user = req.signedCookies[LOGIN_COOKIE_NAME];
+    const userSession = req.signedCookies[LOGIN_COOKIE_NAME];
 
-    if(user._id) {
-      res.json({
-        isLoggin: true
-      });
+    if(userSession && userSession._id) {
+      const user = {
+        id: userSession._id,
+        name: userSession.name,
+        email: userSession.email
+      };
+  
+      res.json(user);
     } else {
-      res.status(200);
+      res.status(401);
       res.json({
         isLoggin: false
       });
@@ -65,7 +69,10 @@ router.get('/', function(req, res, next) {
  * Logout
  */
 router.get('/logout', function(req, res, next) {
-
+  res.clearCookie(LOGIN_COOKIE_NAME);
+  res.json({
+    message: 'logout is successful'
+  });
 });
 
 /**

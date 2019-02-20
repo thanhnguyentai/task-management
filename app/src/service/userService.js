@@ -3,8 +3,8 @@ import { AppConfig } from '../config';
 
 
 class UserService {
-    isLoggin() {
-        return axios.get(AppConfig.apiRoot + AppConfig.isLoginEndpoint, {
+    checkSession() {
+        return axios.get(AppConfig.apiRoot + AppConfig.sessionEndpoint, {
             withCredentials: true
         })
         .then(response => {
@@ -19,6 +19,15 @@ class UserService {
                 email: email,
                 password: password
             }
+        })
+        .then(response => {
+            return response.data;
+        });
+    }
+
+    logout() {
+        return axios.get(AppConfig.apiRoot + AppConfig.logoutEndpoint, {
+            withCredentials: true
         })
         .then(response => {
             return response.data;
