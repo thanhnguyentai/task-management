@@ -55,7 +55,7 @@ export const getProjectDetailAction = (projectId) => (dispatch, getState) => {
         getProjectDetail(projectId).then(response => {
             dispatch({
                 type: PROJECT_ACTIONS.DETAIL_PROJECT,
-                project: response
+                project: response ? response : {}
             });
         })
     }
