@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './css/app.scss';
 import {connect} from 'react-redux';
 import {getUserData} from './reducers';
 import {setUserInfoAction} from './actions/user';
 import UserService from './service/userService';
-import {withRouter} from 'react-router-dom';
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -13,11 +12,8 @@ function mapStateToProps(state, ownProps) {
 }
 
 function Layout({children, user, setUserInfo}) {
-  const [isLogout, setIsLogout] = useState(false);
-
   const logout = function() {
     UserService.logout().then(()=> {
-      setIsLogout(true);
       setUserInfo({});
     }).catch(err => {});
   };
@@ -32,7 +28,7 @@ function Layout({children, user, setUserInfo}) {
               {
                 user.id &&
                 <span className="user-info">
-                  Hi {user.name}, <a onClick={logout} className="clickable">Logout</a>
+                  Hi {user.name}, <span onClick={logout} className="clickable link">Logout</span>
                 </span>
               }
             </div>
