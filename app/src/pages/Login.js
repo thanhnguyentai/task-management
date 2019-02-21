@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import validator from 'email-validator'
 import { Button, Form } from 'semantic-ui-react';
 import './Login.scss';
 import UserService from '../service/userService';
 
 function Login(props) {
     const [isLogin, setLogin] = useState(true);
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
@@ -15,6 +17,10 @@ function Login(props) {
 
     const login = function() {
         setLogin(true);
+    }
+
+    const onChangeName = function(event) {
+        setName(event.target.value);
     }
 
     const onChangeEmail = function(event) {
@@ -30,7 +36,7 @@ function Login(props) {
     }
 
     const doLogin = function() {
-        if(email && password) {
+        if(email && validator.validate(email) && password) {
             UserService.login(email, password).then(data => {
                 if(data.id) {
                     props.onLogin(data);
@@ -41,12 +47,21 @@ function Login(props) {
         }
     }
 
+    const doRegister = function() {}
+
     return (
         <div className='login-wrapper'>
             <Form>
-                <h1>Login</h1>
+                {isLogin && <h1>Login</h1>}
+                {!isLogin && <h1>Create an account</h1>}
+                {
+                    !isLogin && 
+                    <Form.Field>
+                        <input type='text' placeholder="Name" value={name} onChange={onChangeName} />
+                    </Form.Field>
+                }
                 <Form.Field>
-                    <input placeholder='Email' value={email} onChange={onChangeEmail} />
+                    <input type='email' placeholder="Email" value={email} onChange={onChangeEmail} />
                 </Form.Field>
                 <Form.Field>
                     <input type='password' placeholder="Password" value={password} onChange={onChangePassword} />
@@ -58,7 +73,7 @@ function Login(props) {
                     </Form.Field>
                 }
                 {isLogin && <Button onClick={doLogin}>Login</Button>}
-                {!isLogin && <Button>Register</Button>}
+                {!isLogin && <Button onClick={doRegister}>Sign up</Button>}
                 {isLogin && <div className="login-link-container"><span className="clickable underline" onClick={register}>Register</span></div>}
                 {!isLogin && <div  className="login-link-container"><span className="clickable underline" onClick={login}>Login</span></div>}
             </Form>
