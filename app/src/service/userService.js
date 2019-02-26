@@ -33,6 +33,19 @@ class UserService {
             return response.data;
         });
     }
+
+    createAccount(username, email, password) {
+        return axios.post(AppConfig.apiRoot + AppConfig.createAccountEndpoint, {
+            name: username,
+            email: email,
+            password: password
+        }, {
+            withCredentials: true
+        })
+        .then(response => {
+            return response.data;
+        });
+    }
 }
 
 export default new UserService();

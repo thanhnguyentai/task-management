@@ -23,7 +23,7 @@ function Login(props) {
     }
 
     const onChangeName = function(event) {
-        setName(event.target.value.trim());
+        setName(event.target.value);
     }
 
     const onChangeEmail = function(event) {
@@ -46,7 +46,7 @@ function Login(props) {
                     props.onLogin(data);
                 }
             }).catch(err => {
-                console.log(err.response);
+                setError(err.response.data.error);
             });
         } else if(!email || !validator.validate(email)) {
             setError('.please check email');
@@ -58,6 +58,13 @@ function Login(props) {
     const doRegister = function() {
         if(name && email && validator.validate(email) && password && password2 && password === password2) {
             setError('');
+            UserService.createAccount(name, email, password).then(data => {
+                if(data.id) {
+                    props.onLogin(data);
+                }
+            }).catch(err => {
+                setError(err.response.data.error);
+            });
         } else if(!name) {
             setError('.please check name');
         } else if(!email || !validator.validate(email)) {
