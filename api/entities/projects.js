@@ -4,10 +4,11 @@ const projectSchema = new mongoose.Schema({
     name: String,
     description: String,
     created: Number,
+    modified: Number,
     users: [
         {
             userId: mongoose.Schema.Types.ObjectId,
-            role: String
+            role: Number
         }
     ]
 });
