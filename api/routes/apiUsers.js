@@ -2,9 +2,7 @@ import UserService from '../services/users';
 
 const express = require('express');
 const router = express.Router();
-
-const LOGIN_COOKIE_NAME = "task-manager-cookie-login";
-const LOGIN_COOKIE_MAXAGE = 30*24*60*60*1000;
+const cookieHelper = require('../helpers/cookie');
 
 /**
  * Check if a user has already logged in
@@ -12,7 +10,7 @@ const LOGIN_COOKIE_MAXAGE = 30*24*60*60*1000;
 
 router.get('/session', function(req, res, next){
   try {
-    const userSession = req.signedCookies[LOGIN_COOKIE_NAME];
+    const userSession = cookieHelper.getAuthenticatedCookie(req);
 
     if(userSession && userSession._id) {
       const user = {
@@ -38,12 +36,7 @@ router.get('/', function(req, res, next) {
 
   UserService.login(email, password).then(doc => {
     if(!doc.error) {
-      res.cookie(LOGIN_COOKIE_NAME, doc, {
-        path: "/",
-        maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
-        httpOnly: true,
-        signed: true
-      });
+      cookieHelper.setCookieForAuthenticate(res, doc);
   
       const user = {
         id: doc._id,
@@ -65,7 +58,7 @@ router.get('/', function(req, res, next) {
  * Logout
  */
 router.get('/logout', function(req, res, next) {
-  res.clearCookie(LOGIN_COOKIE_NAME);
+  cookieHelper.clearAuthenticatedCookie(res);
   res.json({ message: 'logout is successful' });
 });
 
@@ -79,12 +72,7 @@ router.post('/', function(req, res, next) {
 
   UserService.create(name, email, password).then(doc => {
     if(!doc.error) {
-      res.cookie(LOGIN_COOKIE_NAME, doc, {
-        path: "/",
-        maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
-        httpOnly: true,
-        signed: true
-      });
+      cookieHelper.setCookieForAuthenticate(res, doc);
   
       const user = {
         id: doc._id,
