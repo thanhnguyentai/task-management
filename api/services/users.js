@@ -7,15 +7,15 @@ class UserService {
     create(name, email, password) {
         return new Promise((resolve, reject) => {
             if(!name || !email || !password) {
-                reject({error: 'Name, email and password are required.'});
+                resolve({error: 'Name, email and password are required.'});
             } else if(!UserHelper.emailIsValid(email)) {
-                reject({error: 'Email is invalid'});
+                resolve({error: 'Email is invalid'});
             } else {
                 UserModel.findOne({
                     email: email
                 }).then(doc => {
                     if(doc) {
-                        reject({error: "This email is already used"});
+                        resolve({error: "This email is already used"});
                     } else {
                         const user = new UserModel({
                             name: name,
@@ -40,7 +40,7 @@ class UserService {
     updateInfo(id, name) {
         return new Promise((resolve, reject) => {
             if(!id || !name) {
-                reject({error: 'Id and name are required'});
+                resolve({error: 'Id and name are required'});
             } else {
                 UserModel.findByIdAndUpdate(id, {
                     name: name
@@ -60,7 +60,7 @@ class UserService {
     updatePassword(id, password) {
         return new Promise((resolve, reject) => {
             if(!id || !password) {
-                reject({error: 'Id and password are required'});
+                resolve({error: 'Id and password are required'});
             } else {
                 UserModel.findByIdAndUpdate(id, {
                     password: md5(password)
@@ -80,9 +80,9 @@ class UserService {
     login(email, password) {
         return new Promise((resolve, reject) => {
             if(!email || !password) {
-                reject({error: 'email and password are required'});
+                resolve({error: 'email and password are required'});
             } else if(!UserHelper.emailIsValid(email)) {
-                reject({error: 'Email is invalid'});
+                resolve({error: 'Email is invalid'});
             }else {
                 UserModel.findOne({
                     email: email,
@@ -91,7 +91,7 @@ class UserService {
                     if(doc) {
                         resolve(doc);
                     } else {
-                        reject({
+                        resolve({
                             error: 'Cannot login, email or password is wrong.'
                         });    
                     }

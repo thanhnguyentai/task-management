@@ -20,19 +20,13 @@ router.get('/session', function(req, res, next){
         name: userSession.name,
         email: userSession.email
       };
-  
       res.json(user);
     } else {
-      res.status(401);
-      res.json({
-        isLoggin: false
-      });
+      res.json({ isLoggin: false });
     }
   } catch(err) {
     res.status(500);
-      res.json({
-        isLoggin: false
-      });
+    res.json({ isLoggin: false});
   }
 });
 /**
@@ -42,25 +36,27 @@ router.get('/', function(req, res, next) {
   const email = req.query.email;
   const password = req.query.password;
 
-  UserService.login(email, password)
-  .then(doc => {
-    res.cookie(LOGIN_COOKIE_NAME, doc, {
-      path: "/",
-      maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
-      httpOnly: true,
-      signed: true
-    });
-
-    const user = {
-      id: doc._id,
-      name: doc.name,
-      email: doc.email
-    };
-
-    res.json(user);
+  UserService.login(email, password).then(doc => {
+    if(!doc.error) {
+      res.cookie(LOGIN_COOKIE_NAME, doc, {
+        path: "/",
+        maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
+        httpOnly: true,
+        signed: true
+      });
+  
+      const user = {
+        id: doc._id,
+        name: doc.name,
+        email: doc.email
+      };
+      res.json(user);
+    } else {
+      res.status(400);
+      res.json(doc);
+    }
   }).catch(err => {
-    console.log(err);
-    res.status(401);
+    res.status(500);
     res.json(err);
   });
 });
@@ -70,9 +66,7 @@ router.get('/', function(req, res, next) {
  */
 router.get('/logout', function(req, res, next) {
   res.clearCookie(LOGIN_COOKIE_NAME);
-  res.json({
-    message: 'logout is successful'
-  });
+  res.json({ message: 'logout is successful' });
 });
 
 /**
@@ -84,20 +78,25 @@ router.post('/', function(req, res, next) {
   const password = req.body.password;
 
   UserService.create(name, email, password).then(doc => {
-    res.cookie(LOGIN_COOKIE_NAME, doc, {
-      path: "/",
-      maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
-      httpOnly: true,
-      signed: true
-    });
-
-    const user = {
-      id: doc._id,
-      name: doc.name,
-      email: doc.email
-    };
-    
-    res.json(user);
+    if(!doc.error) {
+      res.cookie(LOGIN_COOKIE_NAME, doc, {
+        path: "/",
+        maxAge: Date.now() + LOGIN_COOKIE_MAXAGE,
+        httpOnly: true,
+        signed: true
+      });
+  
+      const user = {
+        id: doc._id,
+        name: doc.name,
+        email: doc.email
+      };
+      
+      res.json(user);
+    } else {
+      res.status(400);
+      res.json(doc);
+    }
   }).catch(err => {
     res.status(500);
     res.json(err);
