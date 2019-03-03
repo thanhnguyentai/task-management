@@ -1,14 +1,14 @@
 import md5 from 'md5';
 import { UserModel } from '../entities/users';
-import { UserHelper } from '../helpers/users';
+const userHelper = require('../helpers/users');
 
 
-class UserService {
+const userService = {
     create(name, email, password) {
         return new Promise((resolve, reject) => {
             if(!name || !email || !password) {
                 resolve({error: 'Name, email and password are required.'});
-            } else if(!UserHelper.emailIsValid(email)) {
+            } else if(!userHelper.emailIsValid(email)) {
                 resolve({error: 'Email is invalid'});
             } else {
                 UserModel.findOne({
@@ -35,7 +35,7 @@ class UserService {
                 });
             }
         });
-    }
+    },
 
     updateInfo(id, name) {
         return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ class UserService {
                 })
             }
         });
-    }
+    },
 
     updatePassword(id, password) {
         return new Promise((resolve, reject) => {
@@ -75,13 +75,13 @@ class UserService {
                 })
             }
         });
-    }
+    },
 
     login(email, password) {
         return new Promise((resolve, reject) => {
             if(!email || !password) {
                 resolve({error: 'email and password are required'});
-            } else if(!UserHelper.emailIsValid(email)) {
+            } else if(!userHelper.emailIsValid(email)) {
                 resolve({error: 'Email is invalid'});
             }else {
                 UserModel.findOne({
@@ -105,4 +105,4 @@ class UserService {
     }
 }
 
-export default new UserService();
+module.exports = userService;

@@ -11,7 +11,7 @@ const indexRouter = require('./routes/indexPage');
 const projectsRouter = require('./routes/projectsPage');
 const apiRouter = require('./routes/api');
 
-import './services/database';
+require('./services/database');
 
 const app = express();
 

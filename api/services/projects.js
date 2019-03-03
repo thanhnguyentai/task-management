@@ -9,7 +9,7 @@ const ProjectRoles = {
 }
 
 
-class ProjectService {
+const projectService = {
     create(userId, name, description) {
         return new Promise((resolve, reject) => {
             if(!name) {
@@ -35,31 +35,31 @@ class ProjectService {
                 });
             }
         });
-    }
+    },
 
     update(projectId, name, description, userId) {
         return new Promise((resolve, reject) => {
 
         });
-    }
+    },
 
     delete(projectId, userId) {
         return new Promise((resolve, reject) => {
 
         });
-    }
+    },
 
     addUser(projectId, userId, currentUserId) {
         return new Promise((resolve, reject) => {
 
         });
-    }
+    },
 
     removeUser(projectId, userId, currentUserId) {
         return new Promise((resolve, reject) => {
 
         });
-    }
+    },
 
     changeUserRole(projectId, userId, newRole, currentUserId) {
         return new Promise((resolve, reject) => {
@@ -68,4 +68,4 @@ class ProjectService {
     }
 }
 
-export default new ProjectService();
+module.exports = projectService;
