@@ -49,9 +49,7 @@ const userService = {
                         message: 'Update info successfully'
                     });
                 }).catch(err => {
-                    reject({
-                        error: 'Update info failed'
-                    });
+                    reject({error: err.msg});
                 })
             }
         });
@@ -69,9 +67,7 @@ const userService = {
                         message: 'Update password successfully'
                     });
                 }).catch(err => {
-                    reject({
-                        error: 'Update password failed'
-                    });
+                    reject({error: err.msg});
                 })
             }
         });
@@ -96,9 +92,7 @@ const userService = {
                         });    
                     }
                 }).catch(err => {
-                    reject({
-                        error: 'Cannot login, email or password is wrong.'
-                    });
+                    reject({error: err.msg});
                 })
             }
         });
