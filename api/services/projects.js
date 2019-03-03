@@ -283,6 +283,8 @@ const projectService = {
                         userId: currentUserId
                     }
                 }
+            }, null, {
+                modified: -1 // sort projects desc by modified
             }).then(projects => {
                 if(projects && projects.length > 0) {
                     const projectData = projects.map(project => {
