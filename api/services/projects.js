@@ -2,25 +2,29 @@ import { ProjectModel } from '../entities/projects';
 
 const ProjectRoles = {
     ADMIN: 100,
-    CAN_CREATE: 10,
+    CAN_CREATE_TASK: 10,
     VIEW: 1
 }
 
 const calculateRole = function(role) {
     if(role >= ProjectRoles.ADMIN)
         return ProjectRoles.ADMIN;
-    if(role >= ProjectRoles.CAN_CREATE)
-        return ProjectRoles.CAN_CREATE;
+    if(role >= ProjectRoles.CAN_CREATE_TASK)
+        return ProjectRoles.CAN_CREATE_TASK;
     return ProjectRoles.VIEW;
 };
 
 const isProjectAdmin = function(project, userId) {
-    const isAdmin = project.users.some(user => {
+    return project.users.some(user => {
         return user.userId === userId && user.role === ProjectRoles.ADMIN;
     });
-
-    return isAdmin;
 };
+
+const isAuthorizeToCreateTask = function(project, userId) {
+    return project.users.some(user => {
+        return user.userId === userId && user.role >= ProjectRoles.CAN_CREATE_TASK;
+    });
+}
 
 const projectService = {
     create(name, description, currentUserId) {
@@ -272,7 +276,34 @@ const projectService = {
     },
 
     getProjectsByUser(currentUserId) {
-        
+        return new Promise((resolve, reject) => {
+            ProjectModel.find({
+                users: {
+                    $elementMatch: {
+                        userId: currentUserId
+                    }
+                }
+            }).then(projects => {
+                if(projects && projects.length > 0) {
+                    const projectData = projects.map(project => {
+                        return {
+                            _id: project._id,
+                            name: project.name,
+                            description: project.description,
+                            canUpdateProject: isProjectAdmin(project, currentUserId),
+                            canDeleteProject: project.createdBy === currentUserId,
+                            canCreateTask: isAuthorizeToCreateTask(project, currentUserId)
+                        };
+                    });
+
+                    resolve(projectData);
+                } else {
+                    resolve([]);
+                }
+            }).catch(err => {
+                reject({error: err.msg});
+            });
+        });
     }
 }
 
