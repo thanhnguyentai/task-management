@@ -14,6 +14,12 @@ const calculateRole = function(role) {
     return ProjectRoles.VIEW;
 };
 
+const roleIsValid = function(role) {
+    if(isNaN(role)) return false;
+    if(parseInt(role, 10) < ProjectRoles.VIEW) return false;
+    return true;
+};
+
 const isProjectAdmin = function(project, userId) {
     return project.users.some(user => {
         return user.userId === userId && user.role === ProjectRoles.ADMIN;
@@ -45,8 +51,15 @@ const projectService = {
                     }]
                 });
 
-                project.save().then(doc => {
-                    resolve(doc);
+                project.save().then(project => {
+                    resolve({
+                        _id: project._id,
+                        name: project.name,
+                        description: project.description,
+                        canUpdateProject: true,
+                        canDeleteProject: true,
+                        canCreateTask: true
+                    });
                 }).catch(err => {
                     reject({error: err.msg});
                 });
@@ -124,154 +137,184 @@ const projectService = {
 
     addUser(projectId, userId, role, currentUserId) {
         return new Promise((resolve, reject) => {
-            ProjectModel.findById(projectId)
-            .then(project => {
-                if(project) {
-                    const hasAuthorize = isProjectAdmin(project, currentUserId);
+            if(!projectId || !userId || !role) {
+                resolve({
+                    error: 'Project, user and role are required'
+                });
+            } else if(!roleIsValid(role)) {
+                resolve({
+                    error: 'Role is not valid'
+                });
+            } else {
+                role = parseInt(role, 10);
 
-                    if(!hasAuthorize) {
-                        resolve({
-                            error: 'You are not allowed to do it'
-                        });
-                    } else {
-                        const wasAdded = project.users.some(user => {
-                            return user.userId === userId;
-                        });
-    
-                        if(wasAdded) {
+                ProjectModel.findById(projectId)
+                .then(project => {
+                    if(project) {
+                        const hasAuthorize = isProjectAdmin(project, currentUserId);
+
+                        if(!hasAuthorize) {
                             resolve({
-                                error: 'This user is already in the project'
+                                error: 'You are not allowed to do it'
                             });
                         } else {
-                            const projectRole = calculateRole(role);
-                            project.users.push({
-                                userId: userId,
-                                role: projectRole
+                            const wasAdded = project.users.some(user => {
+                                return user.userId === userId;
                             });
+        
+                            if(wasAdded) {
+                                resolve({
+                                    error: 'This user is already in the project'
+                                });
+                            } else {
+                                const projectRole = calculateRole(role);
+                                project.users.push({
+                                    userId: userId,
+                                    role: projectRole
+                                });
 
-                            project.save(err => {
-                                if(err) {
-                                    reject({error: err.msg});
-                                } else {
-                                    resolve({
-                                        message: 'Add the user successfully'
-                                    });
-                                }
-                            });
+                                project.save(err => {
+                                    if(err) {
+                                        reject({error: err.msg});
+                                    } else {
+                                        resolve({
+                                            message: 'Add the user successfully'
+                                        });
+                                    }
+                                });
+                            }
                         }
+                    } else {
+                        resolve({
+                            error: 'The project is not found'
+                        });
                     }
-                } else {
-                    resolve({
-                        error: 'The project is not found'
-                    });
-                }
-            }).catch(err => {
-                reject({error: err.msg});
-            });
+                }).catch(err => {
+                    reject({error: err.msg});
+                });
+            }
         });
     },
 
     removeUser(projectId, userId, currentUserId) {
         return new Promise((resolve, reject) => {
-            ProjectModel.findById(projectId)
-            .then(project => {
-                if(project) {
-                    const hasAuthorize = isProjectAdmin(project, currentUserId);
+            if(!projectId || !userId) {
+                resolve({
+                    error: 'Project and user are required'
+                });
+            } else {
+                ProjectModel.findById(projectId)
+                .then(project => {
+                    if(project) {
+                        const hasAuthorize = isProjectAdmin(project, currentUserId);
 
-                    if(!hasAuthorize) {
-                        resolve({
-                            error: 'You are not allowed to do it'
-                        });
-                    } else {
-                        if(userId === project.createdBy) {
+                        if(!hasAuthorize) {
                             resolve({
-                                error: 'You cannot remove the project creator'
+                                error: 'You are not allowed to do it'
                             });
                         } else {
-                            if(userId === currentUserId) {
+                            if(userId === project.createdBy) {
                                 resolve({
-                                    error: 'You cannot remove yourself from the project'
+                                    error: 'You cannot remove the project creator'
                                 });
                             } else {
-                                const newUsers = project.users.filter(user => {
-                                    return user.userId !== userId;
-                                });
-    
-                                project.users = [...newUsers];
-                                project.save(err => {
-                                    if(err) {
-                                        reject({error: err.msg});
-                                    } else {
-                                        resolve({
-                                            message: 'Remove the user successfully'
-                                        });
-                                    }
-                                });
+                                if(userId === currentUserId) {
+                                    resolve({
+                                        error: 'You cannot remove yourself from the project'
+                                    });
+                                } else {
+                                    const newUsers = project.users.filter(user => {
+                                        return user.userId !== userId;
+                                    });
+        
+                                    project.users = [...newUsers];
+                                    project.save(err => {
+                                        if(err) {
+                                            reject({error: err.msg});
+                                        } else {
+                                            resolve({
+                                                message: 'Remove the user successfully'
+                                            });
+                                        }
+                                    });
+                                }
                             }
                         }
+                    } else {
+                        resolve({
+                            error: 'The project is not found'
+                        });
                     }
-                } else {
-                    resolve({
-                        error: 'The project is not found'
-                    });
-                }
-            }).catch(err => {
-                reject({error: err.msg});
-            });
+                }).catch(err => {
+                    reject({error: err.msg});
+                });
+            }
         });
     },
 
     changeUserRole(projectId, userId, newRole, currentUserId) {
         return new Promise((resolve, reject) => {
-            ProjectModel.findById(projectId)
-            .then(project => {
-                if(project) {
-                    const hasAuthorize = isProjectAdmin(project, currentUserId);
+            if(!projectId || !userId || !role) {
+                resolve({
+                    error: 'Project, user and role are required'
+                });
+            } else if(!roleIsValid(role)) {
+                resolve({
+                    error: 'Role is not valid'
+                });
+            } else {
+                role = parseInt(role, 10);
+                
+                ProjectModel.findById(projectId)
+                .then(project => {
+                    if(project) {
+                        const hasAuthorize = isProjectAdmin(project, currentUserId);
 
-                    if(!hasAuthorize) {
-                        resolve({
-                            error: 'You are not allowed to do it'
-                        });
-                    } else {
-                        if(userId === project.createdBy) {
+                        if(!hasAuthorize) {
                             resolve({
-                                error: 'You cannot change the role of the project creator'
+                                error: 'You are not allowed to do it'
                             });
                         } else {
-                            if(userId === currentUserId) {
+                            if(userId === project.createdBy) {
                                 resolve({
-                                    error: 'You cannot change your role by yourself'
+                                    error: 'You cannot change the role of the project creator'
                                 });
                             } else {
-                                const newUsers = project.users.map(user => {
-                                    if(user.userId === userId) {
-                                        user.role = calculateRole(newRole);
-                                    }
+                                if(userId === currentUserId) {
+                                    resolve({
+                                        error: 'You cannot change your role by yourself'
+                                    });
+                                } else {
+                                    const newUsers = project.users.map(user => {
+                                        if(user.userId === userId) {
+                                            user.role = calculateRole(newRole);
+                                        }
 
-                                    return user;
-                                });
-    
-                                project.users = [...newUsers];
-                                project.save(err => {
-                                    if(err) {
-                                        reject({error: err.msg});
-                                    } else {
-                                        resolve({
-                                            message: 'Update the role of the user successfully'
-                                        });
-                                    }
-                                });
+                                        return user;
+                                    });
+        
+                                    project.users = [...newUsers];
+                                    project.save(err => {
+                                        if(err) {
+                                            reject({error: err.msg});
+                                        } else {
+                                            resolve({
+                                                message: 'Update the role of the user successfully'
+                                            });
+                                        }
+                                    });
+                                }
                             }
                         }
+                    } else {
+                        resolve({
+                            error: 'The project is not found'
+                        });
                     }
-                } else {
-                    resolve({
-                        error: 'The project is not found'
-                    });
-                }
-            }).catch(err => {
-                reject({error: err.msg});
-            });
+                }).catch(err => {
+                    reject({error: err.msg});
+                });
+            }
         });
     },
 
