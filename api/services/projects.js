@@ -1,5 +1,7 @@
 import { ProjectModel } from '../entities/projects';
 
+const userService = require('./users');
+
 const ProjectRoles = {
     ADMIN: 100,
     CAN_CREATE_TASK: 10,
@@ -348,6 +350,61 @@ const projectService = {
             }).catch(err => {
                 reject({error: err.msg});
             });
+        });
+    },
+
+    getUsersOfProject(projectId, currentUserId) {
+        return new Promise((resolve, reject) => {
+            if(!projectId) {
+                resolve({
+                    error: 'Project is required'
+                });
+            } else {
+                ProjectModel.findById(projectId)
+                .then(project => {
+                    if(project) {
+                        const hasAuthorize = isProjectAdmin(project, currentUserId);
+
+                        if(!hasAuthorize) {
+                            resolve({
+                                error: 'You are not allowed to access this project.'
+                            });
+                        } else {
+                            const userIds = project.users.filter(user => user.userId !== currentUserId)
+                                                        .map(user => user.userId);
+                            if(userIds.length > 0) {
+                                userService.getUsersDetail(userIds)
+                                .then(users => {
+                                    users = users.map(user => {
+                                        if(user._id) {
+                                            user.id = user._id;
+                                            delete user._id;
+                                        }
+                                        for(let i=0; i<project.users.length; i++) {
+                                            if(project.users[i].userId === user.id) {
+                                                user.role = project.users[i].role;
+                                                break;
+                                            }
+                                        }
+                                        return user;
+                                    });
+                                    resolve(users);
+                                }).catch(err => {
+                                    reject({error: err.msg});
+                                });
+                            } else {
+                                resolve([]);
+                            }
+                        }
+                    } else {
+                        resolve({
+                            error: 'The project is not found'
+                        });
+                    }
+                }).catch(err => {
+                    reject({error: err.msg});
+                });
+            }
         });
     }
 }

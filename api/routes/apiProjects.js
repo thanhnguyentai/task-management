@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const cookieHelper = require('../helpers/cookie');
 const projectService = require('../services/projects');
+const userService = require('../services/users');
 
 // Get list projects
 router.get('/list', function(req, res, next){
@@ -62,18 +63,37 @@ router.post('/delete', function(req, res, next) {
 router.get('/users', function(req, res, next) {
   const user = cookieHelper.getAuthenticatedCookie(req);
   const id   = req.body.id;
+
+  projectService.getUsersOfProject(id, user._id)
+  .then(users => {
+    res.json(users);
+  }).catch(err => {
+    res.json(err);
+  });
 });
 
 // Add an user to a project
 router.post('/add-user', function(req, res, next) {
-  const user = cookieHelper.getAuthenticatedCookie(req);
+  const userCookie = cookieHelper.getAuthenticatedCookie(req);
   const id   = req.body.id;
-  const userId = req.body.user;
+  const email = req.body.email;
   const role = req.body.role;
 
-  projectService.addUser(id, userId, role, user._id)
-  .then(message => {
-    res.json(message);
+  userService.getUserByEmail(email)
+  .then(user => {
+    if(user) {
+  const userCookie = cookieHelper.getAuthenticatedCookie(req);
+      projectService.addUser(id, user._id, role, userCookie._id)
+      .then(message => {
+        res.json(message);
+      }).catch(err => {
+        res.json(err);
+      });
+    } else {
+      res.json({
+        error: 'This user is not found'
+      })
+    }
   }).catch(err => {
     res.json(err);
   });

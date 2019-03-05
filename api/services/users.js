@@ -1,4 +1,5 @@
 import md5 from 'md5';
+import mongoose from 'mongoose';
 import { UserModel } from '../entities/users';
 const userHelper = require('../helpers/users');
 
@@ -94,6 +95,36 @@ const userService = {
                 }).catch(err => {
                     reject({error: err.msg});
                 })
+            }
+        });
+    },
+
+    getUsersDetail(userIds) {
+        return new Promise((resolve, reject) => {
+            UserModel.find({
+                _id: {
+                    $in: userIds.map(id => mongoose.Types.ObjectId(id))
+                }
+            }, '_id name email').then(users => {
+                resolve(users);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    },
+
+    getUserByEmail(email) {
+        return new Promise((resolve, reject) => {
+            if(!email || !userHelper.emailIsValid(email)) {
+                resolve({error: 'Email is not correct'});
+            } else {
+                UserModel.findOne({
+                    email: email
+                }).then(user => {
+                    resolve(user);
+                }).catch(err => {
+                    reject(err);
+                });
             }
         });
     }
