@@ -6,5 +6,15 @@ export const AppConfig = {
         login: '/user',
         logout: '/user/logout',
         createAccount: '/user'
+    },
+    projectEndpoint: {
+        list: '/project/list',
+        create: '/project/create',
+        update: '/project/update',
+        delete: '/project/delete',
+        users: '/project/users',
+        addUser: '/project/add-user',
+        changeUserRole: '/project/change-role',
+        removeUser: '/project/remove-user'
     }
 };
